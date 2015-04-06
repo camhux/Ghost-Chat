@@ -2,25 +2,45 @@ var express = require('express');
 var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
-
+var haunt = require(__dirname + '/haunt.js');
 
 
 // Socket handler for name entry
 io.on('connection', function(socket){
-	var username;
-
-	console.log("someone connected");
+	
+	/* Declare var to store username for greeting, and initialize flag
+	 * to prevent simultaneous responses to multiple quick inputs */
+	var username, responseFlag = false;
 
 	// One-off name registration for socket
 	socket.on('username', function(val) {
 		username = val;
-		console.log(username);
+		responseFlag = true;
+		setTimeout(function() {
+			socket.emit('typing');
+			setTimeout(function() {
+				socket.emit('message', haunt.greet(username));
+				responseFlag = false;
+			}, (Math.random()*4000 + 2000));
+		}, (Math.random()*3000 + 3000));
+		
 	});
 
 	// Message routing
 	socket.on('message', function(message){
-		console.log(message);
+		if (responseFlag === false) {
+			responseFlag = true;
+			setTimeout(function() {
+				socket.emit('typing');
+				setTimeout(function() {
+					socket.emit('message', haunt.respond()); 
+					responseFlag = false;
+				}, (Math.random()*3000 + 3000));
+			}, (Math.random()*3000 + 1000));
+			
+		}
 	});
+
 
 });
 

@@ -3,71 +3,31 @@
 <head>
 
 	<title>Ancient Ghost Finder</title>
-	<style>
-
-		body {
-			text-align: center;
-			background-color: #374853;
-			color: #ADB4B9;
-		}
-
-		input {
-			border: 1px solid #5F8FAE;
-			margin: 3px;
-		}
-
-		#username {
-			text-align: center;
-			padding: 5px;
-		}
-
-		#chatWrapper {
-			margin: 100px auto 40px auto;
-			max-width: 640px;
-			min-width: 500px;
-			max-height: 580px;
-			min-height: 400px;
-		}
-
-		#chatMessages {
-			font-size: 14pt;
-			font-family: Helvetica, sans-serif;
-			list-style-type: none;
-			height: 300px;
-			width: 100%;
-			display: block;
-			border: 2px solid #5F8FAE;
-			background-color: #ADB4B9;
-			color: #192024;
-			overflow: scroll;
-			text-align: left;
-		}
-
-		#chatField {
-			width: 90%;
-			height: 1.5em;
-			padding: 3px;
-			margin: 5px;
-		}
-
-		#sendButton {
-			padding: 4px;
-		}
-
-
-
-	</style>
+	<link rel="stylesheet" href="styles.css">
 </head>
 
 <body>
 
 <div id="main">
 
-<h1>Greetings</h1>
+<div id="introWrapper">
 
-<p>Let me know your name.</p>
+	<h1>Greetings</h1>
 
-<input id="username" type="text" placeholder="Do not be frightened." noautocomplete required>
+	<p>Let me know your name.</p>
+
+	<input id="username" type="text" placeholder="Do not be frightened." autocomplete="off" required>
+
+</div>
+
+<div id="chatWrapper" hidden>
+
+	<ul id="chatMessages"></ul>
+	<div id="typeIndicator" class="idle">Ghost is typing...</div>
+	<span id="chatInput"><input type="text" id="chatField" autocomplete="off">
+	<input type="button" value="Send" id="sendButton"></span>
+
+</div>
 
 </div>
 
