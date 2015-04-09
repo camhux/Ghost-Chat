@@ -43,7 +43,8 @@ chatInput.addEventListener('keypress', function(event) {
 		sendMessage(event);
 });
 
-socket.on('message', function(msg) {
+// Message reception and display
+socket.on('chatMessage', function(msg) {
 	typeIndicator.className = 'idle';
 	var newItem = document.createElement('li');
 	newItem.className = 'ghostMsg';
@@ -63,11 +64,12 @@ socket.on('typing', function() {
 	typeIndicator.className = 'typing';
 });
 
+
 // Callback for message emission
 function sendMessage(event) {
 	var newItem;
 	if (chatField.value != '') {
-		socket.emit('message', chatField.value);
+		socket.emit('chatMessage', chatField.value);
 		newItem = document.createElement('li');
 		newItem.className = 'selfMsg';
 		newItem.textContent = chatField.value;

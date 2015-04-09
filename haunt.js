@@ -29,18 +29,37 @@ var responses = ["It's very cold here, lol",
                   "What if I decided to find your email address and publicize it"
                   ];
 
+// Placeholder for implementation of dupe prevention
 var lastResponse;
 
+// Helper function 
 function getRandomElement(arr) {
   return arr[Math.floor(Math.random()*arr.length)];
 }
 
+/* First message generator, accounting for some being formatted
+ * with username and others not */
 exports.greet = function(name) {
   var result, greeting = getRandomElement(greetings);
   (greeting.indexOf('%') >= 0) ? result = util.format(greeting, name) : result = greeting;
   return result;
 }
 
+// Response generator
 exports.respond = function(prev) {
   return getRandomElement(responses);
+}
+
+// Timing functions
+exports.firstPause = function() {
+  return Math.random()*2000 + 1000;
+}
+exports.firstTyping = function() {
+  return Math.random()*3000 + 1000;
+}
+exports.responsePause = function() {
+  return Math.random()*2000 + 1000;
+}
+exports.responseTyping = function() {
+  return Math.random()*2000 + 1000;
 }
