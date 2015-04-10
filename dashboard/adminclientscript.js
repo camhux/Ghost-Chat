@@ -2,9 +2,9 @@ var socket = io(''),
     dashboardSocket = io('/dashboard.io');
 
 dashboardSocket.on('chatIDSync', function(data) {
-  for (ID in data) {
-    console.log(data[ID]);
-    socket.emit('joinRequest', data[ID])
+  for (var id in data) {
+    console.log(data[id]);
+    socket.emit('joinRequest', data[id]);
   }
 });
 
