@@ -8,12 +8,10 @@ var history = {};
 var chatIDs = {};
 
 
-
-
 // Public chat socket handler
 io.on('connection', function(socket){
     // IIFE returns closure for each socket
-    return (function(socket)  {
+    // return (function(socket)  {
       /* Declare var to store username for greeting, and initialize flag
        * to prevent simultaneous responses to multiple quick inputs */
       var username, responseFlag = false;
@@ -53,9 +51,7 @@ io.on('connection', function(socket){
         console.log('Dashboard socket successfully joined room ID: ' + id);
       });
 
-  })
-
-}());
+});
 
 // Dashboard connection handler
 dashboard.on('connection', function(socket) {
