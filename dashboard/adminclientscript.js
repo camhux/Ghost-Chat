@@ -1,12 +1,15 @@
 // var socket = io(),
 var dashboardSocket = io('http://localhost:3000/dashboard');
+var chatWindow = document.getElementById('cw1')
+
 
 dashboardSocket.on('history', function(history){
+chatWindow.innerHTML = '';
   Object.keys(history).forEach(function(chatId) {
-    console.log(history[chatId]);
+    
     var chatname = document.createElement('li');
     chatname.textContent = 'Chat with: ' + history[chatId].username;
-    document.body.appendChild(chatname);
+    chatWindow.appendChild(chatname);
 
 
     var messages = history[chatId].messages.map(function(message) {
@@ -15,7 +18,8 @@ dashboardSocket.on('history', function(history){
     
     var messagesEl = document.createElement('li');
     messagesEl.textContent = messages;
-    document.body.appendChild(messagesEl);
+    chatWindow.appendChild(messagesEl);
   });
   
 });
+

@@ -51,18 +51,11 @@ io.on('connection', function(socket){
         }, haunt.responsePause());
       }
     });
-  
-    // Listener for dashboard join
-    socket.on('joinRequest', function(id) {
-      socket.join(id);
-      console.log('Dashboard socket successfully joined room ID: ' + id);
-    });
-
 });
 
 // Dashboard connection handler
 dashboard.on('connection', function(socket) {
-  socket.emit('history', history)
+  sendHistoryToDashboard();
 });
 
 
@@ -72,6 +65,14 @@ function saveMessage(socketId, sender, text, timestamp) {
     sender: sender,
     timestamp: timestamp
   });
+
+  sendHistoryToDashboard();
+}
+
+function sendHistoryToDashboard() {
+  // send the whole history object to every dashboard
+  // todo: send incremental changes
+  dashboard.emit('history', history);
 }
 
 
