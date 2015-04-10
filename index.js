@@ -12,12 +12,10 @@ io.on('connection', function(socket){
     /* Declare var to store username for greeting, and initialize flag
      * to prevent simultaneous responses to multiple quick inputs */
     var responseFlag = false;
-
-    history[socket.id] = { messages: [], username: null };
-  
+ 
     // One-off name registration for socket
     socket.on('username', function(username) {
-      history[socket.id].username = null;
+      history[socket.id] = { messages: [], username: username };
 
       responseFlag = true;
       setTimeout(function() {
@@ -64,7 +62,6 @@ io.on('connection', function(socket){
 
 // Dashboard connection handler
 dashboard.on('connection', function(socket) {
-  console.log('dash connection');
 });
 
 
