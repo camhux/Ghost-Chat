@@ -1,85 +1,85 @@
 body {
-			text-align: center;
-			background-color: #374853;
-			color: #ADB4B9;
-		}
+      text-align: center;
+      background-color: #374853;
+      color: #ADB4B9;
+    }
 
 input {
-			border: 1px solid #5F8FAE;
-			margin: 3px;
-		}
+      border: 1px solid #5F8FAE;
+      margin: 3px;
+    }
 
 #username {
-			text-align: center;
-			padding: 5px;
-		}
+      text-align: center;
+      padding: 5px;
+    }
 
 #chatWrapper {
-			margin: 100px auto 40px auto;
-			max-width: 640px;
-			min-width: 500px;
-			max-height: 580px;
-			min-height: 400px;
-		}
+      margin: 100px auto 40px auto;
+      max-width: 640px;
+      min-width: 500px;
+      max-height: 580px;
+      min-height: 400px;
+    }
 
 #chatMessages {
-			font-size: 14pt;
-			font-family: Helvetica, sans-serif;
-			list-style-type: none;
-			height: 300px;
-			width: 100%;
-			display: block;
-			border: 2px solid #5F8FAE;
-			background-color: #ADB4B9;
-			color: #192024;
-			text-align: left;
-			overflow-y: scroll;
-		}
+      font-size: 14pt;
+      font-family: Helvetica, sans-serif;
+      list-style-type: none;
+      height: 300px;
+      width: 100%;
+      display: block;
+      border: 2px solid #5F8FAE;
+      background-color: #ADB4B9;
+      color: #192024;
+      text-align: left;
+      overflow-y: scroll;
+    }
 
 #chatMessages li {
-			margin: .8em;
-			padding: 6px;
-			color: #003366;
-			background-color: #ffffff;
-			border: 1px black solid;
-			border-radius: 5px;
-			left: -60px;
-		}
+      margin: .8em;
+      padding: 6px;
+      color: #003366;
+      background-color: #ffffff;
+      border: 1px black solid;
+      border-radius: 5px;
+      left: -60px;
+    }
 
 .selfMsg::before {
-			content: 'You say: ';
-			font-size: 12pt;
-			font-style: italic;
-			color: #0F69B4;
-		}
+      content: 'You say: ';
+      font-size: 12pt;
+      font-style: italic;
+      color: #0F69B4;
+    }
 
 .ghostMsg::before {
-			content: 'Ghost says: ';
-			font-size: 12pt;
-			font-style: italic;
-			color: #7F0000;
-		}
+      content: 'Ghost says: ';
+      font-size: 12pt;
+      font-style: italic;
+      color: #7F0000;
+    }
 
 
 .typing {
-	display: block;
-	left: auto;
-	right: auto;
+  display: block;
+  left: auto;
+  right: auto;
 }
 
 .idle {
-	display: none;
-	left: auto;
-	right: auto;
+  display: none;
+  left: auto;
+  right: auto;
 }
 
 #chatField {
-			width: 90%;
-			height: 1.5em;
-			padding: 3px;
-			margin: 5px;
-		}
+      width: 90%;
+      height: 1.5em;
+      padding: 3px;
+      margin: 5px;
+    }
 
 #sendButton {
-			padding: 4px;
-		}
+      padding: 4px;
+    }
