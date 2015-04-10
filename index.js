@@ -78,8 +78,6 @@ function sendHistoryToDashboard() {
 
 // Statics
 app.use('/', express.static(__dirname + '/public'));
-
-// app.use('/socket.io.js', express.static(__dirname + '/node_modules/socket.io/node_modules/socket.io-client'));
 app.use('/db', express.static(__dirname + '/dashboard', {index: "dashboard.html"}));
 
 // Serve socket client file to browser when requested
