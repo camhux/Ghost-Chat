@@ -62,6 +62,7 @@ io.on('connection', function(socket){
 
 // Dashboard connection handler
 dashboard.on('connection', function(socket) {
+  socket.emit('history', history)
 });
 
 
