@@ -29,14 +29,6 @@ dashboardSocket.on('history', function(history){
       // Append display div to wrapper
       allChatWrapper.appendChild(chatWindow);
 
-
-    /* var messages = history[chatId].messages.map(function(message) {
-      return message.text;
-    });
-    
-    var messagesEl = document.createElement('li');
-    messagesEl.textContent = messages;
-    chatWindow.appendChild(messagesEl);*/
   }); 
   
 });
