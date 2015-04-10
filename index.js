@@ -82,7 +82,7 @@ function sendHistoryToDashboard() {
 // Delete function waits for response timeouts to clear to prevent race condition on liveHistory property
 function deleteHistory(socketId, responseFlag) {
   if (responseFlag === true) {
-    setTimeout(deleteHistory(socketId), 5000);
+    setTimeout(deleteHistory(socketId, responseFlag), 5000);
   } else {
     closedHistory[socketId] = liveHistory[socketId];
     delete liveHistory[socketId];
