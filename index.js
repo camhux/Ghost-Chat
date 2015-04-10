@@ -5,7 +5,8 @@ var io = require('socket.io')(server);
 
 var dashboard = io.of('/dashboard');
 var haunt = require('./haunt.js');
-var history = {};
+var liveHistory = {};
+var closedHistory = {};
 
 // Public chat socket handler
 io.on('connection', function(socket){
@@ -15,7 +16,7 @@ io.on('connection', function(socket){
  
     // One-off name registration for socket
     socket.on('username', function(username) {
-      history[socket.id] = { messages: [], username: username };
+      liveHistory[socket.id] = { messages: [], username: username };
 
       responseFlag = true;
       setTimeout(function() {
@@ -53,9 +54,7 @@ io.on('connection', function(socket){
     });
 
     // Delete history when a user disconnects
-    socket.on('disconnect', function() {
-      history.delete(socket.id);
-    });
+    socket.on('disconnect', deleteHistory.bind(this, socket.id, responseFlag));
 
 });
 
@@ -64,9 +63,8 @@ dashboard.on('connection', function(socket) {
   sendHistoryToDashboard();
 });
 
-
 function saveMessage(socketId, sender, text, timestamp) {
-  history[socketId].messages.push({
+  liveHistory[socketId].messages.push({
     text: text,
     sender: sender,
     timestamp: timestamp
@@ -78,9 +76,19 @@ function saveMessage(socketId, sender, text, timestamp) {
 function sendHistoryToDashboard() {
   // send the whole history object to every dashboard
   // todo: send incremental changes
-  dashboard.emit('history', history);
+  dashboard.emit('history', liveHistory);
 }
 
+// Delete function waits for response timeouts to clear to prevent race condition on liveHistory property
+function deleteHistory(socketId, responseFlag) {
+  if (responseFlag === true) {
+    setTimeout(deleteHistory(socketId), 5000);
+  } else {
+    closedHistory[socketId] = liveHistory[socketId];
+    delete liveHistory[socketId];
+    sendHistoryToDashboard();
+  }
+}
 
 // Statics
 app.use('/', express.static(__dirname + '/public'));
