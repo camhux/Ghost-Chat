@@ -6,38 +6,48 @@ var io = require('socket.io')(server);
 var dashboard = io.of('/dashboard');
 var haunt = require('./haunt.js');
 var history = {};
-var chatIDs = {};
-
 
 // Public chat socket handler
 io.on('connection', function(socket){
     /* Declare var to store username for greeting, and initialize flag
      * to prevent simultaneous responses to multiple quick inputs */
-    var username, responseFlag = false;
+    var responseFlag = false;
+
+    history[socket.id] = { messages: [], username: null };
   
     // One-off name registration for socket
-    socket.on('username', function(val) {
-      username = val;
-      chatIDs[username] = socket.id;
+    socket.on('username', function(username) {
+      history[socket.id].username = null;
+
       responseFlag = true;
       setTimeout(function() {
         socket.emit('typing');
         setTimeout(function() {
-          io.to(socket.id).emit('chatMessage', haunt.greet(username));
+          // save ghost's greeting
+          var greeting = haunt.greet(username);
+          saveMessage(socket.id, 'ghost', greeting, Date.now());
+          io.to(socket.id).emit('chatMessage', greeting);
           responseFlag = false;
-        }, haunt.firstTyping())
+        }, haunt.firstTyping());
       }, haunt.firstPause());
       
     });
   
     // Message routing
     socket.on('chatMessage', function(message){
+      // save user's message
+      saveMessage(socket.id, 'user', message, Date.now());
+
       if (responseFlag === false) {
         responseFlag = true;
         setTimeout(function() {
           socket.emit('typing');
           setTimeout(function() {
-            io.to(socket.id).emit('chatMessage', haunt.respond()); 
+            var response = haunt.respond();
+            // save ghost's response
+            saveMessage(socket.id, 'ghost', response, Date.now());
+
+            io.to(socket.id).emit('chatMessage', response);
             responseFlag = false;
           }, haunt.responseTyping());
         }, haunt.responsePause());
@@ -56,6 +66,15 @@ io.on('connection', function(socket){
 dashboard.on('connection', function(socket) {
   console.log('dash connection');
 });
+
+
+function saveMessage(socketId, sender, text, timestamp) {
+  history[socketId].messages.push({
+    text: text,
+    sender: sender,
+    timestamp: timestamp
+  });
+}
 
 
 // Statics
