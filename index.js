@@ -51,6 +51,12 @@ io.on('connection', function(socket){
         }, haunt.responsePause());
       }
     });
+
+    // Delete history when a user disconnects
+    socket.on('disconnect', function() {
+      history.delete(socket.id);
+    });
+
 });
 
 // Dashboard connection handler

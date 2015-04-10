@@ -3,10 +3,20 @@
 <head>
 	<meta charset="utf-8">
 	<title>Behind the ghostly curtain....</title>
+	<style>
+		#template {
+			display: none;
+		}
+	</style>
 </head>
 <body>
 
-<div class="chatWindow" id="cw1"><ul class="chatMessages"></ul></div>
+<div id="template" class="chatWindow">
+	<div class="nameLabel"></div>
+	<ul class="chatMessages"></ul>
+</div>
+
+<div id="allChatWrapper"></div>
 
 <script src="/socket.io.js"></script>
 <script src="adminclientscript.js"></script>
