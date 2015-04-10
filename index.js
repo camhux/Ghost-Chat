@@ -14,46 +14,46 @@ var chatIDs = {};
 io.on('connection', function(socket){
     // IIFE returns closure for each socket
     return (function(socket)  {
-          /* Declare var to store username for greeting, and initialize flag
-           * to prevent simultaneous responses to multiple quick inputs */
-          var username, responseFlag = false;
-        
-          // One-off name registration for socket
-          socket.on('username', function(val) {
-            username = val;
-            chatIDs[username] = socket.id;
-            responseFlag = true;
-            setTimeout(function() {
-              socket.emit('typing');
-              setTimeout(function() {
-                io.to(socket.id).emit('chatMessage', haunt.greet(username));
-                responseFlag = false;
-              }, haunt.firstTyping())
-            }, haunt.firstPause());
-            
-          });
-        
-          // Message routing
-          socket.on('chatMessage', function(message){
-            if (responseFlag === false) {
-              responseFlag = true;
-              setTimeout(function() {
-                socket.emit('typing');
-                setTimeout(function() {
-                  io.to(socket.id).emit('chatMessage', haunt.respond()); 
-                  responseFlag = false;
-                }, haunt.responseTyping());
-              }, haunt.responsePause());
-            }
-          });
-        
-          // Listener for dashboard join
-          socket.on('joinRequest', function(id) {
-            socket.join(id);
-            console.log('Dashboard socket successfully joined room ID: ' + id);
-          });
+      /* Declare var to store username for greeting, and initialize flag
+       * to prevent simultaneous responses to multiple quick inputs */
+      var username, responseFlag = false;
     
-      })
+      // One-off name registration for socket
+      socket.on('username', function(val) {
+        username = val;
+        chatIDs[username] = socket.id;
+        responseFlag = true;
+        setTimeout(function() {
+          socket.emit('typing');
+          setTimeout(function() {
+            io.to(socket.id).emit('chatMessage', haunt.greet(username));
+            responseFlag = false;
+          }, haunt.firstTyping())
+        }, haunt.firstPause());
+        
+      });
+    
+      // Message routing
+      socket.on('chatMessage', function(message){
+        if (responseFlag === false) {
+          responseFlag = true;
+          setTimeout(function() {
+            socket.emit('typing');
+            setTimeout(function() {
+              io.to(socket.id).emit('chatMessage', haunt.respond()); 
+              responseFlag = false;
+            }, haunt.responseTyping());
+          }, haunt.responsePause());
+        }
+      });
+    
+      // Listener for dashboard join
+      socket.on('joinRequest', function(id) {
+        socket.join(id);
+        console.log('Dashboard socket successfully joined room ID: ' + id);
+      });
+
+  })
 
 }());
 
