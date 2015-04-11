@@ -33,3 +33,9 @@ dashboardSocket.on('history', function(history){
   
 });
 
+dashboardSocket.on('messageUpdate', function(message) {
+  var chatWindow = document.getElementById(message.chatId);
+  var newMessage = document.createElement('li');
+  newMessage.textContent = message.sender + ": " + message.text;
+  chatWindow.querySelector('.chatMessages').appendChild(newMessage);
+});

@@ -15,15 +15,19 @@ io.on('connection', function(socket){
  
     // One-off name registration for socket
     socket.on('username', function(username) {
+      // Create history key for socket by ID, format for message containment
       liveHistory[socket.id] = { messages: [], username: username };
+      // Hard-refresh all dashboards
+      sendHistoryToDashboard();
 
       responseFlag = true;
       setTimeout(function() {
         socket.emit('typing');
         setTimeout(function() {
-          // save ghost's greeting
+          // Save ghost's greeting and send to dashboard
           var greeting = haunt.greet(username);
-          saveMessage(socket.id, 'ghost', greeting, Date.now());
+          sendMessageToDashboard(saveMessage(socket.id, 'ghost', greeting, Date.now(), true));
+          // Emit greeting
           io.to(socket.id).emit('chatMessage', greeting);
           responseFlag = false;
         }, haunt.firstTyping());
@@ -33,8 +37,8 @@ io.on('connection', function(socket){
   
     // Message routing
     socket.on('chatMessage', function(message){
-      // save user's message
-      saveMessage(socket.id, 'user', message, Date.now());
+      // Save user's message and send to dashboard
+      sendMessageToDashboard(saveMessage(socket.id, 'user', message, Date.now(), true));
 
       if (responseFlag === false) {
         responseFlag = true;
@@ -42,9 +46,9 @@ io.on('connection', function(socket){
           socket.emit('typing');
           setTimeout(function() {
             var response = haunt.respond();
-            // save ghost's response
-            saveMessage(socket.id, 'ghost', response, Date.now());
-
+            // Save ghost's response and send to dashboard
+            sendMessageToDashboard(saveMessage(socket.id, 'ghost', response, Date.now(), true));
+            // Emit response
             io.to(socket.id).emit('chatMessage', response);
             responseFlag = false;
           }, haunt.responseTyping());
@@ -57,26 +61,43 @@ io.on('connection', function(socket){
 
 });
 
-// Dashboard connection handler
+// Dashboard connection handler: hard-refreshes all dashboards
 dashboard.on('connection', function(socket) {
-  sendHistoryToDashboard();
+  sendHistoryToDashboard(socket);
 });
 
-function saveMessage(socketId, sender, text, timestamp) {
+function saveMessage(socketId, sender, text, timestamp, returnFlag) {
+  // Add message to corresponding entry in liveHistory
   liveHistory[socketId].messages.push({
     text: text,
     sender: sender,
     timestamp: timestamp
   });
 
-  // todo: restructure sending
-  sendHistoryToDashboard();
+  // Prepare variable in case the individual message is to be returned
+  var isolatedMessage;
+
+  // If individual message is requested in call, format and assign it
+  if (returnFlag) {
+    isolatedMessage = {chatId: socketId, text: text, sender: sender, timestamp: timestamp};
+  }
+
+  // Return either undefined (no issue if call is not nested) or the message
+  return isolatedMessage;
 }
 
-function sendHistoryToDashboard() {
-  // send the whole history object to every dashboard
-  // todo: send incremental changes
-  dashboard.emit('history', liveHistory);
+function sendMessageToDashboard(message) {
+  dashboard.emit('messageUpdate', message)
+}
+
+function sendHistoryToDashboard(socket) {
+  /* Hard-refresh either all dashboards (if there's no socket param)
+  or a specific socket */
+  if (socket) {
+    dashboard.to(socket.id).emit('history', liveHistory);
+  } else {
+    dashboard.emit('history', liveHistory);
+  }
 }
 
 // Delete function waits for response timeouts to clear to prevent race condition on liveHistory property
