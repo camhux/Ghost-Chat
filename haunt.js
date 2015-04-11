@@ -8,7 +8,24 @@ var greetings = ["Hi %s, pleased to be chattin",
                   "%s.... That was the name of an old friend. Hello :)",
                   "Uhh, Hello?",
                   "...",
-                  "Hi"
+                  "Hi",
+                  "Greetings.",
+                  "Hellol",
+                  "%s is a mook's name. Anyway, hi",
+                  "Thank u for letting me into your browser haha",
+                  "Awoken once more..... lol",
+                  "[tired, resigned voice] Boo",
+                  "Hi %s",
+                  "Bonjour",
+                  "Hola",
+                  "Well met, mortal.",
+                  "Who do you think you are, awakening me from my slumber haha",
+                  "Salutations, befleshed one",
+                  "*rattles bones* Lol. Hi %s",
+                  "Do you hear it, %s? My distant wailing?",
+                  "A new victim...jk :)",
+                  "%s is a nice name. Are you a nice person? It matters later.",
+                  "hi"
                   ];
 
 var responses = ["It's very cold here, lol",
@@ -26,7 +43,34 @@ var responses = ["It's very cold here, lol",
                   "I am actually here.",
                   "Time means nothing when you have died already",
                   "I still use AOL",
-                  "What if I decided to find your email address and publicize it"
+                  "What if I decided to find your email address and publicize it",
+                  "What do you mean by that?",
+                  "I don't think that's true.",
+                  "Have you ever seen Blade Runner (final cut)? They have a VHS of it where I am",
+                  "Haha. Whatever :)",
+                  "I don't think so",
+                  "I agree",
+                  "Yeah man.",
+                  "What's that?",
+                  "I forget what those words mean. It's been a long time since I was a human being like you",
+                  "What I wouldn't do for just to eat a sandwich again, lol",
+                  "Appreciate what you have. It doesn't last forever",
+                  "Have you ever been in love?",
+                  "Yeah",
+                  "Is this freaky to you? It's pretty weird for me.",
+                  "Jealous of the new MacBook. We're like 15 years behind here",
+                  "LSKdfhosdhseght39jsldfs woops sorry",
+                  "Wait'll yousee what happens when you die lol.,",
+                  "Can you give me your home address? I'm just curious",
+                  "I'm trying to send you my Amazon wishlist link but it won't let me. Wack",
+                  "The human body is just full of goo. And it's all trying to get out. You just wait",
+                  "Please drive carefully. That's all I ask now",
+                  "Enjoy the warmth of existence while you can, dude",
+                  ("When I got home from my job at the embassy in Djibouti, I got this dog named " +
+                    "Bluto. I was all shook up from the bombing and he helped me sleep through " + 
+                    "the nights when I would wake up rattling from explosions in my dreams. " +
+                    "Anyway, he got cancer, and he's here with me now. Death's not the end. " +
+                    "Watch your cholesterol."),
                   ];
 
 
