@@ -10,8 +10,9 @@ var closedHistory = {};
 
 // Public chat socket handler
 io.on('connection', function(socket){
-    // Initialize flag to prevent simultaneous responses to multiple quick inputs
-    var responseFlag = false;
+    /* Initialize flag to prevent simultaneous responses to multiple quick inputs,
+       and holder variable to prevent duplicate responses in a row */
+    var lastResponse, responseFlag = false;
  
     // One-off name registration for socket
     socket.on('username', function(username) {
@@ -45,7 +46,7 @@ io.on('connection', function(socket){
         setTimeout(function() {
           socket.emit('typing');
           setTimeout(function() {
-            var response = haunt.respond();
+            var response = lastResponse = haunt.respond(lastResponse);
             // Save ghost's response and send to dashboard
             sendMessageToDashboard(saveMessage(socket.id, 'ghost', response, Date.now(), true));
             // Emit response

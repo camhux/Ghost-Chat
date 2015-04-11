@@ -29,8 +29,6 @@ var responses = ["It's very cold here, lol",
                   "What if I decided to find your email address and publicize it"
                   ];
 
-// Placeholder for implementation of dupe prevention
-var lastResponse;
 
 // Helper function 
 function getRandomElement(arr) {
@@ -45,9 +43,14 @@ exports.greet = function(name) {
   return result;
 }
 
-// Response generator
+/* Response generator takes external variable holding last passed response
+ * to prevent duplicates. Sanity-checks for there being at least 2 possible responses. */
 exports.respond = function(prev) {
-  return getRandomElement(responses);
+  var response = getRandomElement(responses);
+  while (response === prev && responses.length > 1) {
+    response = getRandomElement(responses);
+  }
+  return response;
 }
 
 // Timing functions
