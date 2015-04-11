@@ -10,8 +10,7 @@ var closedHistory = {};
 
 // Public chat socket handler
 io.on('connection', function(socket){
-    /* Declare var to store username for greeting, and initialize flag
-     * to prevent simultaneous responses to multiple quick inputs */
+    // Initialize flag to prevent simultaneous responses to multiple quick inputs
     var responseFlag = false;
  
     // One-off name registration for socket
@@ -70,6 +69,7 @@ function saveMessage(socketId, sender, text, timestamp) {
     timestamp: timestamp
   });
 
+  // todo: restructure sending
   sendHistoryToDashboard();
 }
 
