@@ -2,17 +2,28 @@ var express = require('express');
 var app = express();
 var server = require('http').createServer(app);
 var io = require('socket.io')(server);
+var EventEmitter = require('events');
 
 var dashboard = io.of('/dashboard');
 var haunt = require('./haunt.js');
 var liveHistory = {};
 var closedHistory = {};
 
+var controlManager = new EventEmitter;
+
 // Public chat socket handler
 io.on('connection', function(socket){
     /* Initialize flag to prevent simultaneous responses to multiple quick inputs,
        and holder variable to prevent duplicate responses in a row */
-    var lastResponse, responseFlag = false;
+    var lastResponse, controlFlag = false, responseFlag = false;
+
+    controlManager.on('enableControlOnSocket' + socket.id, function() {
+      controlFlag = true;
+    });
+
+    controlManager.on('disableControlOnSocket' + socket.id, function() {
+      controlFlag = false;
+    });
  
     // One-off name registration for socket
     socket.on('username', function(username) {
@@ -21,18 +32,20 @@ io.on('connection', function(socket){
       // Hard-refresh all dashboards
       sendHistoryToDashboard();
 
-      responseFlag = true;
-      setTimeout(function() {
-        socket.emit('typing');
-        setTimeout(function() {
-          // Save ghost's greeting and send to dashboard
-          var greeting = haunt.greet(username);
-          sendMessageToDashboard(saveMessage(socket.id, 'ghost', greeting, Date.now(), true));
-          // Emit greeting
-          io.to(socket.id).emit('chatMessage', greeting);
-          responseFlag = false;
-        }, haunt.firstTyping());
-      }, haunt.firstPause());
+      if (controlFlag === false) {
+            responseFlag = true;
+            setTimeout(function() {
+              socket.emit('typing');
+              setTimeout(function() {
+                // Save ghost's greeting and send to dashboard
+                var greeting = haunt.greet(username);
+                sendMessageToDashboard(saveMessage(socket.id, 'ghost', greeting, Date.now(), true));
+                // Emit greeting
+                io.to(socket.id).emit('chatMessage', greeting);
+                responseFlag = false;
+              }, haunt.firstTyping());
+            }, haunt.firstPause());
+          }
       
     });
   
@@ -41,30 +54,62 @@ io.on('connection', function(socket){
       // Save user's message and send to dashboard
       sendMessageToDashboard(saveMessage(socket.id, 'user', message, Date.now(), true));
 
-      if (responseFlag === false) {
-        responseFlag = true;
-        setTimeout(function() {
-          socket.emit('typing');
-          setTimeout(function() {
-            var response = lastResponse = haunt.respond(lastResponse);
-            // Save ghost's response and send to dashboard
-            sendMessageToDashboard(saveMessage(socket.id, 'ghost', response, Date.now(), true));
-            // Emit response
-            io.to(socket.id).emit('chatMessage', response);
-            responseFlag = false;
-          }, haunt.responseTyping());
-        }, haunt.responsePause());
-      }
+      if (controlFlag === false) {
+            if (responseFlag === false) {
+              responseFlag = true;
+              setTimeout(function() {
+                socket.emit('typing');
+                setTimeout(function() {
+                  var response = lastResponse = haunt.respond(lastResponse);
+                  // Save ghost's response and send to dashboard
+                  sendMessageToDashboard(saveMessage(socket.id, 'ghost', response, Date.now(), true));
+                  // Emit response
+                  io.to(socket.id).emit('chatMessage', response);
+                  responseFlag = false;
+                }, haunt.responseTyping());
+              }, haunt.responsePause());
+            }
+          }
     });
 
-    // Delete history when a user disconnects
-    socket.on('disconnect', deleteHistory.bind(this, socket.id, responseFlag));
+
+    // Delete history and clean up exposed listeners when a user disconnects
+    socket.on('disconnect', function() {
+      deleteHistory(socket.id, responseFlag);
+      controlManager.removeAllListeners('enableControlOnSocket' + socket.id)
+        .removeAllListeners('disableControlOnSocket' + socket.id);
+  });
 
 });
 
 // Dashboard connection handler: hard-refreshes all dashboards
 dashboard.on('connection', function(socket) {
   sendHistoryToDashboard(socket);
+
+  // Block ghost responses on indicated socket
+  socket.on('assumeControl', function(chatId) {
+    controlManager.emit('enableControlOnSocket' + chatId);
+  });
+
+  // Restore ghostly powers
+  socket.on('removeControl', function(chatId) {
+    controlManager.emit('disableControlOnSocket' + chatId);
+  });
+
+  // Indicate when a human ghost is typing, too
+  // TODO: code dash side of this
+  socket.on('dashTyping', function(chatId) {
+    io.to(chatId).emit('typing');
+  });
+
+  /* When dash sends message, it first saves it to history and sends it back
+  to the dash itself as if the ghost had sent it, then emits it to the user socket*/
+  socket.on('dashMessage', function(message) {
+    sendMessageToDashboard(
+      saveMessage(message.chatId, message.sender, message.text, message.timestamp, true));
+    io.to(message.chatId).emit('chatMessage', message.text);
+  });
+
 });
 
 function saveMessage(socketId, sender, text, timestamp, returnFlag) {

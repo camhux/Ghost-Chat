@@ -4,19 +4,35 @@
 	<meta charset="utf-8">
 	<title>Behind the ghostly curtain....</title>
 	<style>
-		#template {
+
+		#viewTemplate, #controlTemplate {
 			display: none;
 		}
+
+		.controlWindow {
+			margin: 20px auto 20px auto;
+		}
+
 	</style>
 </head>
 <body>
 
-<div id="template" class="chatWindow">
+<div id="viewTemplate" class="viewWindow">
 	<div class="nameLabel"></div>
 	<ul class="chatMessages"></ul>
+	<br><button class="takeOver">Take over</button>
+</div>
+
+<div id="controlTemplate" class="controlWindow">
+	<div class="nameLabel"></div>
+	<ul class="chatMessages"></ul>
+	<br><input type="text" class="chatInput"> 
+	<br><button class="giveUp">Relinquish control</button>
 </div>
 
 <div id="allChatWrapper"></div>
+
+<div id="controlledChatContainer"></div>
 
 <script src="/socket.io.js"></script>
 <script src="adminclientscript.js"></script>
