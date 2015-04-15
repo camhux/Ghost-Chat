@@ -50,22 +50,27 @@ dashboardSocket.on('messageUpdate', function(message) {
 });
 
 function takeControl(chatId) {
+  // Block response generation on server
   dashboardSocket.emit('assumeControl', chatId);
 
+  // Hide passive chat displays
   allChatWrapper.setAttribute('hidden', '');
 
+  // Clone and identify (with modified chat ID) the new chat window
   var controlWindow = chatControlTemplate.cloneNode(true);
   controlWindow.id = chatId + '-C';
 
+  // Grab handles for chat message data, and mirror content
   var controlChatMessages = controlWindow.querySelector('.chatMessages');
   var passiveChatMessages = document.getElementById(chatId).querySelector('.chatMessages');
 
   controlChatMessages.innerHTML =  passiveChatMessages.innerHTML;
 
+  // Grab handle for chat input and initialize a flag for "Ghost is typing" function
   var chatInput = controlWindow.querySelector('.chatInput');
-
   var alreadyTyping = false;
 
+  // Input listener
   chatInput.addEventListener('keypress', function(event) {
     if (event.keyCode === 13) {
           sendMessage(chatId, event.target.value);
@@ -85,13 +90,16 @@ function takeControl(chatId) {
   });
 
 
-
+  /* Initialize and use an observer to watch the dashboard message field and mirror it
+     to the controlled chat.
+     Using this one-way binding prevents some icky routing with socket events. */
   var binder = new MutationObserver(function() {
     controlChatMessages.innerHTML =  passiveChatMessages.innerHTML;
   });
 
   binder.observe(passiveChatMessages, {childList: true});
 
+  // Make the "relinquish" button do something
   var giveUpButton = controlWindow.querySelector('.giveUp');
   giveUpButton.addEventListener('click', function(event) {
     removeControlInServer(chatId);
@@ -99,6 +107,7 @@ function takeControl(chatId) {
     allChatWrapper.removeAttribute('hidden');
   });
 
+  // Append that sucker. You're the ghost now
   controlledChatContainer.appendChild(controlWindow);
 }
 

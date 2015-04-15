@@ -9,6 +9,8 @@ var haunt = require('./haunt.js');
 var liveHistory = {};
 var closedHistory = {};
 
+/* Initialize an emitter that will be the intermediary between
+our socket managers, passing simple messages between. */
 var controlManager = new EventEmitter;
 
 // Public chat socket handler
@@ -17,6 +19,9 @@ io.on('connection', function(socket){
        and holder variable to prevent duplicate responses in a row */
     var lastResponse, controlFlag = false, responseFlag = false;
 
+    /* Bind two listeners to control the controlFlag; events are limited 
+       to the right socket by concatenating the ID right on. Dashboard has access
+       to the same ID through the history object/message interface */
     controlManager.on('enableControlOnSocket' + socket.id, function() {
       controlFlag = true;
     });
