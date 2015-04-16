@@ -45,7 +45,6 @@ chatInput.addEventListener('keypress', function(event) {
 
 // Message reception and display
 socket.on('chatMessage', function(msg) {
-  typeIndicator.className = 'idle';
   var newItem = document.createElement('li');
   newItem.className = 'ghostMsg';
   newItem.textContent = msg;
@@ -62,6 +61,11 @@ chatMessages.addEventListener('DOMNodeInserted', function(event){
 // "Ghost is typing..." revealer
 socket.on('typing', function() {
   typeIndicator.className = 'typing';
+});
+
+// and hider
+socket.on('stopTyping', function() {
+  typeIndicator.className = 'idle';
 });
 
 

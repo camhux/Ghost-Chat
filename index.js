@@ -46,7 +46,8 @@ io.on('connection', function(socket){
                 var greeting = haunt.greet(username);
                 sendMessageToDashboard(saveMessage(socket.id, 'ghost', greeting, Date.now(), true));
                 // Emit greeting
-                io.to(socket.id).emit('chatMessage', greeting);
+                socket.emit('chatMessage', greeting);
+                socket.emit('stopTyping');
                 responseFlag = false;
               }, haunt.firstTyping());
             }, haunt.firstPause());
@@ -69,7 +70,8 @@ io.on('connection', function(socket){
                   // Save ghost's response and send to dashboard
                   sendMessageToDashboard(saveMessage(socket.id, 'ghost', response, Date.now(), true));
                   // Emit response
-                  io.to(socket.id).emit('chatMessage', response);
+                  socket.emit('chatMessage', response);
+                  socket.emit('stopTyping');
                   responseFlag = false;
                 }, haunt.responseTyping());
               }, haunt.responsePause());
@@ -102,9 +104,12 @@ dashboard.on('connection', function(socket) {
   });
 
   // Indicate when a human ghost is typing, too
-  // TODO: code dash side of this
-  socket.on('dashTyping', function(chatId) {
-    io.to(chatId).emit('typing');
+  socket.on('dashTyping', function(data) {
+    io.to(data.chatId).emit('typing');
+  });
+
+  socket.on('dashStopTyping', function(data) {
+    io.to(data.chatId).emit('stopTyping');
   });
 
   /* When dash sends message, it first saves it to history and sends it back

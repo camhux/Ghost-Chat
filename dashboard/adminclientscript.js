@@ -76,17 +76,17 @@ function takeControl(chatId) {
           sendMessage(chatId, event.target.value);
           event.target.value = '';
           alreadyTyping = false;
+          chatInput.blur();
         }
   });
 
-  // Primitive "user typing" functionality. TODO: Make better, with more logic.
-  // The "alreadyTyping" flag, from above, prevents flooding socket with redundant events
-  // TODO: This doesn't properly clear when message is sent.
-  chatInput.addEventListener('keypress', function(event) {
-    if (alreadyTyping === false && (event.keyCode > 49 || event.keyCode < 90)) {
-      dashboardSocket.emit('dashTyping', chatId);
-      alreadyTyping = true;
-    }
+  // Primitive "user typing" functionality. 
+  chatInput.addEventListener('focus', function(event) {
+    dashboardSocket.emit('dashTyping', {chatId: chatId});
+  });
+
+  chatInput.addEventListener('blur', function(event) {
+    dashboardSocket.emit('dashStopTyping', {chatId: chatId});
   });
 
 
