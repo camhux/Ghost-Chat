@@ -82,11 +82,11 @@ function takeControl(chatId) {
 
   // Primitive "user typing" functionality. 
   chatInput.addEventListener('focus', function(event) {
-    dashboardSocket.emit('dashTyping', {chatId: chatId});
+    dashboardSocket.emit('dashTyping', chatId);
   });
 
   chatInput.addEventListener('blur', function(event) {
-    dashboardSocket.emit('dashStopTyping', {chatId: chatId});
+    dashboardSocket.emit('dashStopTyping', chatId);
   });
 
 
