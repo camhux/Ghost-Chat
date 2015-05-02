@@ -114,7 +114,7 @@ Ghost.prototype =  {
     var self = this;
 
     return new Promise(function(resolve, reject) {
-      setTimeout(resolve(self.greet()), this._firstPause);
+      setTimeout(function() {resolve(self.greet);}, self._firstPause());
     });
 
   },
@@ -128,7 +128,7 @@ Ghost.prototype =  {
       : greeting;
 
     return new Promise(function(resolve, reject) {
-      setTimeout(resolve(greeting), self._firstPause());
+      setTimeout(function() {resolve(greeting)}, self._firstPause());
     });
 
   },
@@ -137,7 +137,7 @@ Ghost.prototype =  {
     var self = this;
 
     return new Promise(function(resolve, reject) {
-      setTimeout(resolve(self.respond()), self._responsePause());
+      setTimeout(function() {resolve(self.respond)}, self._responsePause());
     });
 
   },
@@ -152,7 +152,7 @@ Ghost.prototype =  {
     }
 
     return new Promise(function(resolve, reject) {
-      setTimeout(resolve(greeting), self._responsePause());
+      setTimeout(function() {resolve(greeting)}, self._responsePause());
     });
 
   },
