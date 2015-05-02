@@ -81,32 +81,98 @@ function getRandomElement(arr) {
 
 /* First message generator, accounting for some being formatted
  * with username and others not */
-exports.greet = function(name) {
+
+/* exports.greet = function(name) {
   var result, greeting = getRandomElement(greetings);
   (greeting.indexOf('%') >= 0) ? result = util.format(greeting, name) : result = greeting;
   return result;
-}
+} */
 
 /* Response generator takes external variable holding last passed response
  * to prevent duplicates. Sanity-checks for there being at least 2 possible responses. */
-exports.respond = function(prev) {
+
+/* exports.respond = function(prev) {
   var response = getRandomElement(responses);
   while (response === prev && responses.length > 1) {
     response = getRandomElement(responses);
   }
   return response;
+} */
+
+
+function Ghost() {
+  this._greetings = greetings;
+
+  this._responses = responses;
+
+  this.lastResponse = '';
 }
 
-// Timing functions
-exports.firstPause = function() {
-  return Math.random()*2000 + 1000;
+Ghost.prototype =  {
+
+  considerGreeting: function() {
+    var self = this;
+
+    return new Promise(function(resolve, reject) {
+      setTimeout(resolve(self.greet()), this._firstPause);
+    });
+
+  },
+
+  greet: function(name) {
+    var self = this;
+    var greeting = getRandomElement(greetings);
+
+    greeting = (greeting.indexOf('%') >= 0)
+      ? util.format(greeting, name)
+      : greeting;
+
+    return new Promise(function(resolve, reject) {
+      setTimeout(resolve(greeting), self._firstPause());
+    });
+
+  },
+
+  considerResponse: function() {
+    var self = this;
+
+    return new Promise(function(resolve, reject) {
+      setTimeout(resolve(self.respond()), self._responsePause());
+    });
+
+  },
+
+  respond: function() {
+    var self = this;
+    var lastResponse = self.lastResponse;
+    var response;
+
+    while (response === undefined || lastResponse) {
+      response = getRandomElement(self._responses);
+    }
+
+    return new Promise(function(resolve, reject) {
+      setTimeout(resolve(greeting), self._responsePause());
+    });
+
+  },
+
+  _firstPause: function() {
+    return Math.random()*2000 + 1000;
+  },
+
+  _firstTyping: function() {
+    return Math.random()*3000 + 1000;
+  },
+
+  _responsePause: function() {
+    return Math.random()*2000 + 1000;
+  },
+
+  _responseTyping: function() {
+    return Math.random()*2000 + 1000;
+  } 
+
 }
-exports.firstTyping = function() {
-  return Math.random()*3000 + 1000;
-}
-exports.responsePause = function() {
-  return Math.random()*2000 + 1000;
-}
-exports.responseTyping = function() {
-  return Math.random()*2000 + 1000;
-}
+
+module.exports = Ghost;
