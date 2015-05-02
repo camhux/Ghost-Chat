@@ -151,6 +151,8 @@ Ghost.prototype =  {
       response = getRandomElement(self._responses);
     }
 
+    self.lastResponse = response;
+
     return new Promise(function(resolve, reject) {
       setTimeout(function() {resolve(greeting)}, self._responsePause());
     });
