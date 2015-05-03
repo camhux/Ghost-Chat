@@ -69,8 +69,7 @@ var responses = ["It's very cold here, lol",
                   ("When I got home from my job at the embassy in Djibouti, I got this dog named " +
                     "Bluto. I was all shook up from the bombing and he helped me sleep through " + 
                     "the nights when I would wake up rattling from explosions in my dreams. " +
-                    "Anyway, he got cancer, and he's here with me now. Death's not the end. " +
-                    "Watch your cholesterol."),
+                    "Anyway, he got cancer, and he's here with me now. Death's not the end. ")
                   ];
 
 
@@ -101,10 +100,6 @@ function getRandomElement(arr) {
 
 
 function Ghost() {
-  this._greetings = greetings;
-
-  this._responses = responses;
-
   this.lastResponse = '';
 }
 
@@ -114,7 +109,7 @@ Ghost.prototype =  {
     var self = this;
 
     return new Promise(function(resolve, reject) {
-      setTimeout(function() {resolve(self.greet);}, self._firstPause());
+      setTimeout(function() {resolve(self.greet.bind(self))}, self._firstPause());
     });
 
   },
@@ -127,8 +122,10 @@ Ghost.prototype =  {
       ? util.format(greeting, name)
       : greeting;
 
+    console.log('Greeting selected: ' + greeting);
+
     return new Promise(function(resolve, reject) {
-      setTimeout(function() {resolve(greeting)}, self._firstPause());
+      setTimeout(function() {resolve(greeting)}, self._firstTyping());
     });
 
   },
@@ -137,7 +134,7 @@ Ghost.prototype =  {
     var self = this;
 
     return new Promise(function(resolve, reject) {
-      setTimeout(function() {resolve(self.respond)}, self._responsePause());
+      setTimeout(function() {resolve(self.respond.bind(self))}, self._responsePause());
     });
 
   },
@@ -147,14 +144,14 @@ Ghost.prototype =  {
     var lastResponse = self.lastResponse;
     var response;
 
-    while (response === undefined || lastResponse) {
-      response = getRandomElement(self._responses);
+    while (response === undefined || response === lastResponse) {
+      response = getRandomElement(responses);
     }
 
     self.lastResponse = response;
 
     return new Promise(function(resolve, reject) {
-      setTimeout(function() {resolve(greeting)}, self._responsePause());
+      setTimeout(function() {resolve(response)}, self._responseTyping());
     });
 
   },

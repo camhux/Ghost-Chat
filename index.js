@@ -53,6 +53,7 @@ io.on('connection', function(socket){
           sendMessageToDashboard(saveMessage(socket.id, 'ghost', greeting, Date.now(), true));
           socket.emit('stopTyping');
           socket.emit('chatMessage', greeting);
+          responseFlag = false;
         });
       }
 
@@ -91,6 +92,7 @@ io.on('connection', function(socket){
           sendMessageToDashboard(saveMessage(socket.id, 'ghost', response, Date.now(), true));
           socket.emit('stopTyping');
           socket.emit('chatMessage', response);
+          responseFlag = false;
         });
     }
 
