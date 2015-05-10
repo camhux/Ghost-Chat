@@ -78,27 +78,6 @@ function getRandomElement(arr) {
   return arr[Math.floor(Math.random()*arr.length)];
 }
 
-/* First message generator, accounting for some being formatted
- * with username and others not */
-
-/* exports.greet = function(name) {
-  var result, greeting = getRandomElement(greetings);
-  (greeting.indexOf('%') >= 0) ? result = util.format(greeting, name) : result = greeting;
-  return result;
-} */
-
-/* Response generator takes external variable holding last passed response
- * to prevent duplicates. Sanity-checks for there being at least 2 possible responses. */
-
-/* exports.respond = function(prev) {
-  var response = getRandomElement(responses);
-  while (response === prev && responses.length > 1) {
-    response = getRandomElement(responses);
-  }
-  return response;
-} */
-
-
 function Ghost() {
   this.lastResponse = '';
 }

@@ -56,23 +56,6 @@ io.on('connection', function(socket){
           responseFlag = false;
         });
       }
-
-    // Old implementation
-    /* if (controlFlag === false) {
-          responseFlag = true;
-          setTimeout(function() {
-            socket.emit('typing');
-            setTimeout(function() {
-              // Save ghost's greeting and send to dashboard
-              var greeting = haunt.greet(username);
-              sendMessageToDashboard(saveMessage(socket.id, 'ghost', greeting, Date.now(), true));
-              // Emit greeting
-              socket.emit('chatMessage', greeting);
-              socket.emit('stopTyping');
-              responseFlag = false;
-            }, haunt.firstTyping());
-          }, haunt.firstPause());
-        } */
     
   });
 
@@ -96,24 +79,6 @@ io.on('connection', function(socket){
         });
     }
 
-    // Old implementation
-    /* if (controlFlag === false) {
-          if (responseFlag === false) {
-            responseFlag = true;
-            setTimeout(function() {
-              socket.emit('typing');
-              setTimeout(function() {
-                var response = lastResponse = haunt.respond(lastResponse);
-                // Save ghost's response and send to dashboard
-                sendMessageToDashboard(saveMessage(socket.id, 'ghost', response, Date.now(), true));
-                // Emit response
-                socket.emit('chatMessage', response);
-                socket.emit('stopTyping');
-                responseFlag = false;
-              }, haunt.responseTyping());
-            }, haunt.responsePause());
-          }
-        } */
   });
 
 
