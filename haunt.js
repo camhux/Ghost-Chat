@@ -126,15 +126,9 @@ Ghost.prototype =  {
 
     while (response === undefined || response === lastResponse) {
       response = getRandomElement(responses);
-      self.lastResponse = response;
     }
 
-    console.log('Response selected: ' + response);
-
-    if (!(Array.isArray(response))) {
-      response = [response];
-      console.log('Response arrayed: ' + response);
-    }
+    self.lastResponse = response;
 
     return self._ResponseChainer(response);
   },
@@ -158,6 +152,9 @@ Ghost.prototype =  {
   _ResponseChainer: function(responseArr) {
     var self = this;
     var i = 0;
+
+    if (!Array.isArray(responseArr)) responseArr = [responseArr];
+    
     var len = responseArr.length;
     var chainer = {
 
