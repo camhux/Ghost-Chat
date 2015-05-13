@@ -88,7 +88,7 @@ Ghost.prototype =  {
     var self = this;
 
     return new Promise(function(resolve, reject) {
-      setTimeout(function() {resolve(self.greet.bind(self))}, self._firstPause());
+      setTimeout(function() {resolve()}, self._firstPause());
     });
 
   },
@@ -113,7 +113,7 @@ Ghost.prototype =  {
     var self = this;
 
     return new Promise(function(resolve, reject) {
-      setTimeout(function() {resolve(self.respond.bind(self))}, self._responsePause());
+      setTimeout(function() {resolve()}, self._responsePause());
     });
 
   },

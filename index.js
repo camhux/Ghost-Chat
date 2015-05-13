@@ -45,15 +45,17 @@ io.on('connection', function(socket){
     if (controlFlag === false) {
       responseFlag = true;
       ghost.considerGreeting()
-        .then(function(greetFn) {
+        .then(function() {
           socket.emit('typing');
-          return greetFn(username);
         })
-        .then(function(greeting) {
-          sendMessageToDashboard(saveMessage(socket.id, 'ghost', greeting, Date.now(), true));
-          socket.emit('stopTyping');
-          socket.emit('chatMessage', greeting);
-          responseFlag = false;
+        .then(function() {
+          ghost.respond()
+            .then(function(greeting) {
+              sendMessageToDashboard(saveMessage(socket.id, 'ghost', greeting, Date.now(), true));
+              socket.emit('stopTyping');
+              socket.emit('chatMessage', greeting);
+              responseFlag = false;
+            });
         });
       }
     
@@ -66,16 +68,19 @@ io.on('connection', function(socket){
 
     if (responseFlag === false && controlFlag === false) {
       responseFlag = true;
+
       ghost.considerResponse()
-        .then(function(respondFn) {
+        .then(function() {
           socket.emit('typing');
-          return respondFn();
         })
-        .then(function(response) {
-          sendMessageToDashboard(saveMessage(socket.id, 'ghost', response, Date.now(), true));
-          socket.emit('stopTyping');
-          socket.emit('chatMessage', response);
-          responseFlag = false;
+        .then(function() {
+          ghost.respond()
+            .then(function(response) {
+              sendMessageToDashboard(saveMessage(socket.id, 'ghost', response, Date.now(), true));
+              socket.emit('stopTyping');
+              socket.emit('chatMessage', response);
+              responseFlag = false;
+            });
         });
     }
 
