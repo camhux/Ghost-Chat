@@ -82,10 +82,10 @@ io.on('connection', function(socket){
             if (next) {
               socket.emit('typing');
               return next.then(responseHandler);
-            }
+            } else responseFlag = false;
           });
 
-          responseFlag = false;
+
 
         });
     }
