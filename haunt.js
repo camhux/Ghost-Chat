@@ -28,7 +28,7 @@ var greetings = ["Hi %s, pleased to be chattin",
                   "hi"
                   ];
 
-var responses = ["It's very cold here, lol",
+/* var responses = ["It's very cold here, lol",
                   "That's interesting.",
                   "What if I decided to torment you",
                   "I was a pretty girl in a life. I was a sexy woman, but now I'm a skeleton. I'm a ghost",
@@ -70,10 +70,14 @@ var responses = ["It's very cold here, lol",
                     "Bluto. I was all shook up from the bombing and he helped me sleep through " + 
                     "the nights when I would wake up rattling from explosions in my dreams. " +
                     "Anyway, he got cancer, and he's here with me now. Death's not the end. ")
-                  ];
+                  ]; */
+
+  var responses = [ ["This", "is", "test", "one"],
+                    ["This", "is", "test", "two"]
+  ];
 
 
-// Helper function 
+// Helper function
 function getRandomElement(arr) {
   return arr[Math.floor(Math.random()*arr.length)];
 }
@@ -125,14 +129,17 @@ Ghost.prototype =  {
 
     while (response === undefined || response === lastResponse) {
       response = getRandomElement(responses);
+      self.lastResponse = response;
     }
 
-    self.lastResponse = response;
+    console.log('Response selected: ' + response);
 
-    return new Promise(function(resolve, reject) {
-      setTimeout(function() {resolve(response)}, self._responseTyping());
-    });
+    if (!(Array.isArray(response))) {
+      response = [response];
+      console.log('Response arrayed: ' + response);
+    }
 
+    return self._ResponseChainer(response);
   },
 
   _firstPause: function() {
@@ -149,7 +156,26 @@ Ghost.prototype =  {
 
   _responseTyping: function() {
     return Math.random()*2000 + 1000;
-  } 
+  },
+
+  _ResponseChainer: function(responseArr) {
+    var self = this;
+    var i = 0;
+    var len = responseArr.length;
+    var chainer = {
+
+      next: function next() {
+        if (i < len) {
+          return new Promise(function(resolve, reject) {
+            setTimeout(function() {
+                        resolve(responseArr[i++]);
+                      }, self._responseTyping());
+          });
+        } else return undefined;
+      }
+    }
+    return chainer;
+  }
 
 }
 

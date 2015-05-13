@@ -1,3 +1,4 @@
+'use strict';
 var express = require('express');
 var app = express();
 var server = require('http').createServer(app);
@@ -47,9 +48,7 @@ io.on('connection', function(socket){
       ghost.considerGreeting()
         .then(function() {
           socket.emit('typing');
-        })
-        .then(function() {
-          ghost.respond()
+          ghost.greet(username)
             .then(function(greeting) {
               sendMessageToDashboard(saveMessage(socket.id, 'ghost', greeting, Date.now(), true));
               socket.emit('stopTyping');
@@ -72,17 +71,24 @@ io.on('connection', function(socket){
       ghost.considerResponse()
         .then(function() {
           socket.emit('typing');
-        })
-        .then(function() {
-          ghost.respond()
-            .then(function(response) {
-              sendMessageToDashboard(saveMessage(socket.id, 'ghost', response, Date.now(), true));
-              socket.emit('stopTyping');
-              socket.emit('chatMessage', response);
-              responseFlag = false;
-            });
+          var responseChain = ghost.respond();
+          var responsePromise = responseChain.next();
+
+          responsePromise.then(function responseHandler(response) {
+            if (!response) return;
+            socket.emit('typing');
+            sendMessageToDashboard(saveMessage(socket.id, 'ghost', response, Date.now(), true));
+            socket.emit('stopTyping');
+            socket.emit('chatMessage', response);
+            return responseChain.next().then(responseHandler);
+          });
+
+          responseFlag = false;
+
         });
     }
+
+
 
   });
 
