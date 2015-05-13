@@ -75,12 +75,14 @@ io.on('connection', function(socket){
           var responsePromise = responseChain.next();
 
           responsePromise.then(function responseHandler(response) {
-            if (!response) return;
-            socket.emit('typing');
             sendMessageToDashboard(saveMessage(socket.id, 'ghost', response, Date.now(), true));
             socket.emit('stopTyping');
             socket.emit('chatMessage', response);
-            return responseChain.next().then(responseHandler);
+            var next = responseChain.next();
+            if (next) {
+              socket.emit('typing');
+              return next.then(responseHandler);
+            }
           });
 
           responseFlag = false;

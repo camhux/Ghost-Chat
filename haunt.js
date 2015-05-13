@@ -28,7 +28,7 @@ var greetings = ["Hi %s, pleased to be chattin",
                   "hi"
                   ];
 
-/* var responses = ["It's very cold here, lol",
+var responses = ["It's very cold here, lol",
                   "That's interesting.",
                   "What if I decided to torment you",
                   "I was a pretty girl in a life. I was a sexy woman, but now I'm a skeleton. I'm a ghost",
@@ -46,7 +46,7 @@ var greetings = ["Hi %s, pleased to be chattin",
                   "What if I decided to find your email address and publicize it",
                   "What do you mean by that?",
                   "I don't think that's true.",
-                  "Have you ever seen Blade Runner (final cut)? They have a VHS of it where I am",
+                  ["Have you ever seen Blade Runner (final cut)?", "They have a VHS of it where I am"],
                   "Haha. Whatever :)",
                   "I don't think so",
                   "I agree",
@@ -59,22 +59,19 @@ var greetings = ["Hi %s, pleased to be chattin",
                   "Yeah",
                   "Is this freaky to you? It's pretty weird for me.",
                   "Jealous of the new MacBook. We're like 15 years behind here",
-                  "LSKdfhosdhseght39jsldfs woops sorry",
+                  ["LSKdfhosdhseght39jsldfs", "woops sorry"],
                   "Wait'll yousee what happens when you die lol.,",
                   "Can you give me your home address? I'm just curious",
                   "I'm trying to send you my Amazon wishlist link but it won't let me. Wack",
                   "The human body is just full of goo. And it's all trying to get out. You just wait",
                   "Please drive carefully. That's all I ask now",
                   "Enjoy the warmth of existence while you can, dude",
-                  ("When I got home from my job at the embassy in Djibouti, I got this dog named " +
-                    "Bluto. I was all shook up from the bombing and he helped me sleep through " + 
-                    "the nights when I would wake up rattling from explosions in my dreams. " +
-                    "Anyway, he got cancer, and he's here with me now. Death's not the end. ")
-                  ]; */
+                  ["When I got home from my job at the embassy in Djibouti, I got this dog named " +
+                    "Bluto.", "I was all shook up from the bombing and he helped me sleep through " + 
+                    "the nights when I would wake up rattling from explosions in my dreams. ",
+                    "Anyway, he got cancer, and he's here with me now. Death's not the end. "]
+                  ];
 
-  var responses = [ ["This", "is", "test", "one"],
-                    ["This", "is", "test", "two"]
-  ];
 
 
 // Helper function
