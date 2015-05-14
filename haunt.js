@@ -28,7 +28,7 @@ var greetings = ["Hi %s, pleased to be chattin",
                   "hi"
                   ];
 
-var responses = ["It's very cold here, lol",
+/* var responses = ["It's very cold here, lol",
                   "That's interesting.",
                   "What if I decided to torment you",
                   "I was a pretty girl in a life. I was a sexy woman, but now I'm a skeleton. I'm a ghost",
@@ -70,8 +70,11 @@ var responses = ["It's very cold here, lol",
                     "Bluto.", "I was all shook up from the bombing and he helped me sleep through " + 
                     "the nights when I would wake up rattling from explosions in my dreams. ",
                     "Anyway, he got cancer, and he's here with me now. Death's not the end. "]
-                  ];
+                  ]; */
 
+var responses = [["This is a test, no?", "&await", "I'm glad we could agree."],
+                 ["This, also, is a test, do you find?", "&await", "Absolutely, chum."]
+]
 
 
 // Helper function
@@ -145,6 +148,10 @@ Ghost.prototype =  {
     return Math.random()*2000 + 1000;
   },
 
+  _responseShortPause: function() {
+    return Math.random()*1500 + 600;
+  },
+
   _responseTyping: function() {
     return Math.random()*2000 + 1000;
   },
@@ -154,20 +161,38 @@ Ghost.prototype =  {
     var i = 0;
 
     if (!Array.isArray(responseArr)) responseArr = [responseArr];
-    
+
     var len = responseArr.length;
     var chainer = {
 
+      done: false,
+
       next: function next() {
-        if (i < len) {
-          return new Promise(function(resolve, reject) {
-            setTimeout(function() {
-                        resolve(responseArr[i++]);
-                      }, self._responseTyping());
+        var result;
+        if (i === len) this.done = true;
+        
+        if (!this.done) {
+
+          result = new Promise(function(resolve, reject) {
+            if (responseArr[i] !== "&await") {
+              console.log('Checkpoint threeish again: non-await promise executor invoked. Have the value: ' + responseArr[i]);
+              setTimeout(function() {
+                                      resolve(responseArr[i++]);
+                                    }, self._responseTyping());
+            } else {
+              console.log('Checkpoint six or something: await executor invoked');
+              resolve("&await");
+              i++;
+            }
           });
-        } else return undefined;
+
+        };
+        if (i === len) this.done = true;
+        return result;
       }
+
     }
+
     return chainer;
   }
 
