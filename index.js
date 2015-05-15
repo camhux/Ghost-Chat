@@ -78,11 +78,6 @@ io.on('connection', function(socket){
       ghost.bus.on('response', function(response) {
         console.log('response handler triggered');
         socket.emit('stopTyping');
-        if (!response) {
-          responseFlag = false;
-          ghost.bus.removeAllListeners();
-          return;
-        };
 
         var await = false;
         if (awaitRegExp.test(response)) {
@@ -99,16 +94,22 @@ io.on('connection', function(socket){
           ghost.respond();
         } else {
           console.log('await path triggered');
-          responseFlag = false;
-          ghost.bus.removeAllListeners();
+          haltChain();
         }
 
       });
+
+      ghost.bus.on('haltChain', haltChain);
 
       ghost.considerResponse();
 
     }
 
+    function haltChain() {
+      ghost.bus.removeAllListeners();
+      socket.emit('stopTyping');
+      responseFlag = false;
+    }
 
 
   });

@@ -127,6 +127,8 @@ Ghost.prototype =  {
       while (responseElt === undefined || responseElt === lastResponseElt) {
         responseElt = getRandomElement(responses);
       }
+
+      self.lastResponse = responseElt;
   
       self.chain = self._ResponseChainer(responseElt);
     }
@@ -145,14 +147,13 @@ Ghost.prototype =  {
 
   respond: function() {
     var self = this;
-
     var value = self.chain.next();
-    if (!value) {
-      self.bus.emit('response', value);
-      return;
-    }
 
-    setTimeout(function() {self.bus.emit('response', value);}, self._responseTyping());
+    if (!value) {
+      self.bus.emit('haltChain');
+    } else {
+      setTimeout(function() {self.bus.emit('response', value);}, self._responseTyping());
+    }
 
   },
 
