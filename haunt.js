@@ -2,6 +2,7 @@
  * and eventually to manage one-time generation of
  * ghost personalities for each socket connection. */
 var util = require('util');
+var EventEmitter = require('events');
 
 var greetings = ["Hi %s, pleased to be chattin",
                   "%s. What's up?",
@@ -72,8 +73,8 @@ var greetings = ["Hi %s, pleased to be chattin",
                     "Anyway, he got cancer, and he's here with me now. Death's not the end. "]
                   ]; */
 
-var responses = [["This is a test, no?", "&await", "I'm glad we could agree."],
-                 ["This, also, is a test, do you find?", "&await", "Absolutely, chum."]
+var responses = [["This is a test, no? &await", "I'm glad we could agree."],
+                 ["This, also, is a test, do you find? &await", "Absolutely, chum."]
 ]
 
 
@@ -115,26 +116,49 @@ Ghost.prototype =  {
 
   considerResponse: function() {
     var self = this;
+    var lastResponseElt;
+    var responseElt;
 
-    return new Promise(function(resolve, reject) {
-      setTimeout(function() {resolve()}, self._responsePause());
-    });
+    if (!self.chain || self.chain.done) {
+      console.log('chain generation triggered');
+
+      lastResponseElt = self.lastResponse;
+    
+      while (responseElt === undefined || responseElt === lastResponseElt) {
+        responseElt = getRandomElement(responses);
+      }
+  
+      self.chain = self._ResponseChainer(responseElt);
+    }
+
+  
+    setTimeout(function() {self.bus.emit('considered');}, self._responsePause());
+
+  },
+
+  considerNextResponse: function() {
+    var self = this;
+
+    setTimeout(function() {self.bus.emit('considered');}, self._responseShortPause());
 
   },
 
   respond: function() {
     var self = this;
-    var lastResponse = self.lastResponse;
-    var response;
 
-    while (response === undefined || response === lastResponse) {
-      response = getRandomElement(responses);
+    var value = self.chain.next();
+    if (!value) {
+      self.bus.emit('response', value);
+      return;
     }
 
-    self.lastResponse = response;
+    setTimeout(function() {self.bus.emit('response', value);}, self._responseTyping());
 
-    return self._ResponseChainer(response);
   },
+
+  chain: undefined,
+
+  bus: new EventEmitter(),
 
   _firstPause: function() {
     return Math.random()*2000 + 1000;
@@ -163,37 +187,22 @@ Ghost.prototype =  {
     if (!Array.isArray(responseArr)) responseArr = [responseArr];
 
     var len = responseArr.length;
-    var chainer = {
+    var chain = {
 
       done: false,
 
       next: function next() {
-        var result;
-        if (i === len) this.done = true;
-        
-        if (!this.done) {
+        if (this.done) return undefined;
 
-          result = new Promise(function(resolve, reject) {
-            if (responseArr[i] !== "&await") {
-              console.log('Checkpoint threeish again: non-await promise executor invoked. Have the value: ' + responseArr[i]);
-              setTimeout(function() {
-                                      resolve(responseArr[i++]);
-                                    }, self._responseTyping());
-            } else {
-              console.log('Checkpoint six or something: await executor invoked');
-              resolve("&await");
-              i++;
-            }
-          });
+        var result = responseArr[i++];
 
-        };
-        if (i === len) this.done = true;
+        if (i > len) this.done = true;
         return result;
       }
 
     }
 
-    return chainer;
+    return chain;
   }
 
 }

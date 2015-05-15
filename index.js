@@ -10,6 +10,8 @@ var Haunting = require('./haunt.js');
 var liveHistory = {};
 var closedHistory = {};
 
+var awaitRegExp = /\s&await$/;
+
 /* Initialize an emitter that will be the intermediary between
 our socket managers, passing simple messages between. */
 var controlManager = new EventEmitter;
@@ -24,8 +26,6 @@ io.on('connection', function(socket){
   responding */
   var controlFlag = false;
   var responseFlag = false;
-  var awaitingResponseFlag = false;
-  var persistentResponseChain;
 
   /* Bind two listeners to control the controlFlag; events are limited 
      to the right socket by concatenating the ID right on. Dashboard has access
@@ -70,52 +70,43 @@ io.on('connection', function(socket){
     if (responseFlag === false && controlFlag === false) {
       responseFlag = true;
 
-      ghost.considerResponse()
-        .then(function() {
-          socket.emit('typing');
+      ghost.bus.on('considered', function() {
+        socket.emit('typing');
+        ghost.respond();
+      });
 
-          var responseChain;
-          if (awaitingResponseFlag) {
-            console.log('Checkpoint zero: awaiting logic invoked');
-            responseChain = persistentResponseChain;
-            persistentResponseChain = undefined;
-            awaitingResponseFlag = false;
-          } else {
-            console.log('Checkpoint one: response flag bypassed, respond called');
-            responseChain = ghost.respond();
-          }
+      ghost.bus.on('response', function(response) {
+        console.log('response handler triggered');
+        socket.emit('stopTyping');
+        if (!response) {
+          responseFlag = false;
+          ghost.bus.removeAllListeners();
+          return;
+        };
 
-          var responsePromise = responseChain.next();
-          console.log('Checkpoint two: promise retrieved from chain');
-          console.log("Take reading of chain's done-ness: " + responseChain.done);
+        var await = false;
+        if (awaitRegExp.test(response)) {
+          response = response.replace(awaitRegExp, '');
+          await = true;
+        }
 
-          responsePromise.then(function responseHandler(response) {
-            socket.emit('typing');
-            console.log('Checkpoint three: initial promise resolved, handler invoked. Have response value: ' + response);
+        console.log('message sending: ' + response);
+        sendMessageToDashboard(saveMessage(socket.id, 'ghost', response, Date.now(), true));
+        socket.emit('chatMessage', response);
 
-            if (response === "&await") {
-              console.log("Checkpoint awaiting: awaiting logic invoked. Hopefully I don't see this before four");
-              socket.emit('stopTyping');
-              awaitingResponseFlag = true;
-              persistentResponseChain = responseChain;
-              console.log('response chain stashed. have it here: ' + persistentResponseChain);
-              responseFlag = false;
-            } else {
+        if (!await) {
+          console.log('non-await path triggered');
+          ghost.respond();
+        } else {
+          console.log('await path triggered');
+          responseFlag = false;
+          ghost.bus.removeAllListeners();
+        }
 
-              console.log('Checkpoint four: original message logic invoked');
-              sendMessageToDashboard(saveMessage(socket.id, 'ghost', response, Date.now(), true));
-              socket.emit('stopTyping');
-              socket.emit('chatMessage', response);
+      });
 
-              if (!responseChain.done) {
-                return responseChain.next().then(responseHandler);
-              } else responseFlag = false;
+      ghost.considerResponse();
 
-            }
-
-          });
-
-        });
     }
 
 
