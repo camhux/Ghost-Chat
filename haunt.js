@@ -158,11 +158,11 @@ Ghost.prototype =  {
   bus: new EventEmitter(),
 
   _firstPause: function() {
-    return Math.random()*2000 + 1000;
+    return Math.random()*2000 + 2000;
   },
 
   _firstTyping: function() {
-    return Math.random()*3000 + 1000;
+    return Math.random()*3000 + 2000;
   },
 
   _responsePause: function() {
@@ -174,7 +174,7 @@ Ghost.prototype =  {
   },
 
   _responseTyping: function() {
-    return Math.random()*2000 + 1000;
+    return Math.random()*2000 + 1500;
   },
 
   _ResponseChainer: function(responseArr) {

@@ -91,7 +91,7 @@ io.on('connection', function(socket){
 
         if (!await) {
           console.log('non-await path triggered');
-          ghost.respond();
+          ghost.considerNextResponse();
         } else {
           console.log('await path triggered');
           haltChain();
