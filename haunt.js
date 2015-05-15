@@ -29,7 +29,7 @@ var greetings = ["Hi %s, pleased to be chattin",
                   "hi"
                   ];
 
-/* var responses = ["It's very cold here, lol",
+var responses = ["It's very cold here, lol",
                   "That's interesting.",
                   "What if I decided to torment you",
                   "I was a pretty girl in a life. I was a sexy woman, but now I'm a skeleton. I'm a ghost",
@@ -71,11 +71,7 @@ var greetings = ["Hi %s, pleased to be chattin",
                     "Bluto.", "I was all shook up from the bombing and he helped me sleep through " + 
                     "the nights when I would wake up rattling from explosions in my dreams. ",
                     "Anyway, he got cancer, and he's here with me now. Death's not the end. "]
-                  ]; */
-
-var responses = [["This is a test, no? &await", "I'm glad we could agree."],
-                 ["This, also, is a test, do you find? &await", "Absolutely, chum."]
-]
+                  ];
 
 
 // Helper function
