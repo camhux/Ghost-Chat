@@ -120,6 +120,7 @@ io.on('connection', function(socket){
     deleteHistory(socket.id, responseFlag);
     controlManager.removeAllListeners('enableControlOnSocket' + socket.id)
       .removeAllListeners('disableControlOnSocket' + socket.id);
+    ghost.bus.removeAllListeners();
   });
 
 });
