@@ -85,6 +85,7 @@ function Ghost() {
 
 Ghost.prototype =  {
 
+  // TODO: Rewrite with events for consistency. Works all good for now though
   considerGreeting: function() {
     var self = this;
 
@@ -115,7 +116,7 @@ Ghost.prototype =  {
     var lastResponseElt;
     var responseElt;
 
-    if (!self.chain || self.chain.done) {
+    if (!self._chain || self._chain.done) {
       console.log('chain generation triggered');
 
       lastResponseElt = self.lastResponse;
@@ -126,7 +127,7 @@ Ghost.prototype =  {
 
       self.lastResponse = responseElt;
   
-      self.chain = self._ResponseChainer(responseElt);
+      self._chain = self._ResponseChainer(responseElt);
     }
 
   
@@ -143,7 +144,7 @@ Ghost.prototype =  {
 
   respond: function() {
     var self = this;
-    var value = self.chain.next();
+    var value = self._chain.next();
 
     if (!value) {
       self.bus.emit('haltChain');
@@ -153,9 +154,9 @@ Ghost.prototype =  {
 
   },
 
-  chain: undefined,
-
   bus: new EventEmitter(),
+
+  _chain: undefined,
 
   _firstPause: function() {
     return Math.random()*2000 + 2000;
